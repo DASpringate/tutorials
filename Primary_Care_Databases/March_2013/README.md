@@ -24,5 +24,5 @@ Included:
 * PDF of final presentation
 * .Rmd Source file
 
-The pdf was compiled to beamer using [Pandoc](http://johnmacfarlane.net/pandoc/)
+The .Rmd source file  was compiled to beamer using [Pandoc](http://johnmacfarlane.net/pandoc/)
 
