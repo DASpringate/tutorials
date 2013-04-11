@@ -3,7 +3,7 @@
 ## Manchester FLS R User group April 2013
 ### David Springate
 #### @datajujitsu
-##### The Rmd source and data for this tuotrial can be found at 
+##### The Rmd source and data for this tutorial can be found at https://github.com/DASpringate/tutorials 
 
 --------------------
 
@@ -145,7 +145,7 @@ We will be using a version of Fisher's Iris data that I have mangled!
 You can get the original data by calling `data(iris)`
 
 ```{r, tidy = FALSE}
-iris <- read.csv("~/Dropbox/tutorials/subsetting/iris_mangled.csv")
+iris <- read.csv("~/tutorials/subsetting/iris_mangled.csv")
 # If you make a mistake, just call this again to get you back to the start!
 ```
 
@@ -252,7 +252,7 @@ __Your data is now cleaned and ready for analysis!__
 e.g. get_data.R:
 
 ```{r, tidy = FALSE, eval=FALSE}
-iris <- read.csv("~/Dropbox/tutorials/subsetting/iris_mangled.csv")
+iris <- read.csv("~/tutorials/subsetting/iris_mangled.csv")
 iris$petal.Breadth <- NULL
 iris <- iris[!is.na(iris$Sepal.Length),] 
 iris$Petal.Length[iris$Species == "versicolor"] <- iris$Petal.Length[iris$Species == "versicolor"] * 100
