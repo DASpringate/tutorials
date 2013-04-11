@@ -1,0 +1,167 @@
+% Functional Programming in R
+% David Springate
+% University of Manchester Centre for Biostatistics
+% @datajujitsu
+% May 2013
+
+
+What is functional programming?
+===============================
+
+Programming metaphysics
+-----------------------
+
+* Programs are representations of reality on the computer
+* There are different ways to represent reality...
+
+***************
+
+OOP / imperative metaphysics
+----------------------------
+
+* C, Python, Java etc.
+* Everything is an object with state and behaviour
+
+### e.g. A river is a "thing" with various attributes:
+
+* flow rate 
+* depth
+* pollution levels
+
+***************
+
+Functional Metaphysics
+----------------------
+
+"No man ever steps in the same river twice, for it's not the same river and he's not the same man." - Heraclitus
+
+
+* R, Lisp, Haskell
+* Focus is on processes rather than objects
+* Things are a collection of fixed values which go through processes (functions) over time
+* Values are fixed (immutable)
+
+### FUNCTIONAL RIVER DIAGRAM
+
+*****************
+
+Elements of FP
+--------------
+
+* Functions are : 
+    - Closures - Functions that return functions ("Function Factories")
+        - Wrappers
+    - Higher order functions - Functions that take functions as arguments ("Functionals")
+        - For loop replacements
+* Vectorised / declarative expressions
+* Recursion
+
+************
+
+Advantages of FP
+----------------
+
+* Easier debugging
+* Self-documenting code
+* Clear and concise code 
+* Parallelisation
+* No more difficult
+
+************
+
+Functional programming in R
+===========================
+
+R parentage
+-----------
+
+C/Fortran -> S  
+Lisp -> Scheme 
+S + Scheme -> R
+
+So you can write R that looks like C - UGLY
+
+or
+
+R that looks like Lisp - BEAUTIFUL
+
+FP is often discovered later and is seen as confusing
+
+In R everything is a function!
+
+****************
+
+
+
+Declarative programming / vectorised operations
+------------------------------------------------
+```{r}
+# C style vector allocation:
+system.time({
+x <- c()
+for(i in 1:200000){
+    if(i %% 2 == 0){
+        x <- c(x, i)
+    }
+}
+})
+
+# Takes ~ 11 seconds
+# FP style:
+
+system.time({
+a <- 1:200000
+x <- a[a %% 2 == 0]
+})
+
+# Takes ~ 
+```
+
+************
+
+Recursion
+---------
+
+```{r}
+
+a <- list(1, 2, 3, 4, list(5, 6, 7, 8), 9, list(10, list(11, 12)))
+
+tree_count <- function(l){
+    if(is.null(l[[1]])) {
+        return(0)
+    } else if(is.list(l[[1]])){
+        return(tree_count(l[[1]]) + tree_count(l[2:length(l)]))
+    } else {
+        return(l[[1]] + tree_count(l[2:length(l)]))
+    } 
+}
+tree_count(a)
+
+sum(unlist(a))
+```
+
+*************
+
+Higher-order functions
+----------------------
+
+Functions that operate on all elements of a collection (vector/list/dataframe)
+
+apply : apply a function to rows or columns of a matrix/dataframe
+
+
+lapply : apply a function to a collection, return a list 
+vector in, list out
+
+sapply : apply a function to a collection, return a vector/matrix
+
+vector in, vector out
+
+Reduce : collection in, scalar out
+
+
+****************
+
+Further reading
+---------------
+
