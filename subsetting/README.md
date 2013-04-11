@@ -15,4 +15,4 @@ This is a beginners tutorial on cleaning data using vector and dataframe subsett
 * Building a data-cleaning script
 * Problems
 
-
+The Compiled version of this source can be found at http://rpubs.com/daspringate/subsetting
