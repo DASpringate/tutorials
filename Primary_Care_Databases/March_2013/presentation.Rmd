@@ -1,0 +1,313 @@
+% Uses and Validity of Primary Care Database studies
+% May 2013
+% David Springate, Evan Kontopantelis, Ivan Olier, David Reeves 
+
+
+
+Outline
+-------
+
+1. Use of text-mining to explore the scientific literature
+2. Text-mining the PCD literature
+    - What is being studied using PCD's?
+    - Changes in topics of investigation over time
+3. Validity of Clinical coding
+4. ClinicalCodes.org : A new repository for clinical code lists
+
+
+Text mining 
+===========
+
+What is it?
+-----------
+
+> * The process of extracting high-quality structured information from unstructured text (e.g. Scientific literature).
+> * Uses a variety of computational and statistical methods to find patterns and trends in text
+
+### Text mining consists of:
+
+1. Information extraction
+    - Automatically extracting structured information from unstructured text
+2. Semantic searching 
+    - Improves search accuracy by including context into a search
+3. Knowledge discovery
+    - Identifying relationships in extracted data
+
+Why do we need it?
+------------------
+
+\begin{columns}[T]
+    \column{0.4\textwidth}
+        \includegraphics[width=\textwidth]{figure/exploding_head.jpg}
+        
+    \column{0.6\textwidth}
+        \begin{itemize}
+            \item
+                The scientific literature is rapidly increasing in size
+            \pause
+            \item
+                Humans can't keep up to date with the literature 
+                \begin{itemize}
+                    \pause
+                    \item
+                        75 trials and 11 Systematic reviews published per day! Bastian et al. (2010) PLoS Medicine
+                \end{itemize}
+            \pause
+            \item
+                It is increasingly difficult to hone in on relevant papers
+            \pause
+            \item
+                More of the literature is being held online in machine-readable archives
+            \pause
+            \item
+                TM can reduce processing time for systematic reviews by 80\% (NCTM)
+        \end{itemize}
+	
+\end{columns}
+
+Text-mining is not a magic bullet
+---------------------------------
+
+\begin{columns}[T]
+    \column{0.55\textwidth}
+        \begin{itemize}
+            \item
+                Many publications are not open access
+                \begin{itemize}
+                    \item
+                        Often need to rely on abstracts
+                    \item
+                        Grey literature is often inaccessable
+                \end{itemize}
+            \pause    
+            \item
+                Still need plenty of human input!
+            \item
+                TM algorithms can be very complex
+            \item
+                Breadth at the expense of depth
+        \end{itemize}
+    \column{0.45\textwidth}
+        \includegraphics[width=\textwidth]{figure/data_mining.jpg}
+\end{columns}
+
+Text mining the PCD literature
+==============================
+
+UK Primary Care Databases
+-------------------------
+
+### GPRD / CPRD
+
+The General Practice Research Database / The Clinical Practice Research Datalink
+
+> * ~ 900 papers
+
+### THIN 
+
+The Health Improvement Network
+
+> * ~ 360 papers
+
+### QResearch
+
+> * ~ 75 papers
+
+The Dataset
+-----------
+
+* All articles reported by CPRD, THIN, QResearch in Pubmed
+* 1185 Abstracts with metadata
+* 141 full-text articles for validation
+
+\pause
+
+###### How are PCD's being used by researchers?
+
+
+PCD studies are a growth area!
+------------------------------
+
+Number of publications is rapidly increasing...
+
+\includegraphics[width=0.6\textwidth]{figure/articles_per_year.pdf}
+
+PCD studies are a growth area!
+------------------------------
+
+... and there is global interest in UK PCD research
+
+\includegraphics[width=0.8\textwidth]{figure/publications_map.pdf}
+
+
+Broad scope of topics in PCD studies
+------------------------------------
+
+A network graph of PCD topics of investigation
+
+\includegraphics[width=0.7\textwidth]{figure/graph.pdf}
+
+
+Study types are changing...
+--------------------------------
+
+\includegraphics[width=0.7\textwidth]{figure/objects_of_investigation.pdf}
+
+...as are analysis methods
+---------------------------
+
+\includegraphics[width=0.7\textwidth]{figure/analysis_methods.pdf}
+
+PCD validity
+============
+
+* PCDs have many advantages for informing medical practice:
+    - study size
+    - incorporating comorbidities
+    - Socio-economic covariates
+* Studies have shown that PCDs often give results concordant with RCTs (Tannen's group @ Uni. Penn.)
+
+Threats to validity
+-------------------
+
+* Unmeasured confounding
+* Correlation does not equal causation
+* GP recording
+* Clinical coding
+
+Clinical Coding in PCD's
+------------------------
+
+> * All clinical events are entered by GP's as clinical codes:
+
+\pause
+
+>    - Symptoms, signs & diagnoses (READ codes)
+>    - Referrals to external care centres
+>    - Immunisation records
+>    - Prescription information
+>    - Diagnostic test records and results
+
+\pause
+
+> * Everything recorded by a GP can be identified (if you know which codes to look for and where to look for them!)
+
+\pause
+
+### e.g.
+
+> * H331.00 - Asthma diagnosis
+> * H33z011 - Severe asthma attack
+> * 33G1    - Spirometry testing
+
+Clinical codes in PCD studies
+-----------------------------
+
+Diagnoses are made by reference to a set of clinical codes
+
+### Workflow
+
+> 1. Researchers decide on a rough set of codes for a condition
+>     - By searching lookup tables for matching terms
+>     - By reference to an external source (e.g. QOF)
+> 2. Clinicians go through this draft list by hand and select the relevant codes
+> 3. The database is searched for events matching the finalised code list
+> 4. The correct combination of events in the timeframe of interest gives a diagnosis
+>     - e.g. For Asthma: Need at least 1+ clinical event  1+ drug event in the last year to qualify
+    
+Code list? What code list?
+--------------------------
+
+> * Currently no obligation to publish code lists
+> * No centralised repository for clinical codes
+> * The vast majority of PCD studies do not publish their codes
+> * No way of knowing if a condition diagnosis is valid    
+> * No way to replicate the research
+
+### For example...
+
+In 45 UK case-control PCD studies (diabetes):
+
+\pause
+
+* Only 5 reported ANY clinical codes...
+* Only 2 of these published codes in appendix
+* Only 1 provided full set of code lists
+
+Validity of Clinical coding
+---------------------------
+
+Clinical codes should be held to scrutiny and peer-review (either pre- or post-publication)
+
+This would allow for:
+
+* replication of studies
+* validation of diagnoses
+* incremental improvements to clinical definitions
+
+
+ClinicalCodes.org
+-----------------
+
+...Is an online repository for PCD researchers to upload their codes upon publication.
+
+\begin{columns}[T]
+    \column{0.5\textwidth}
+        \begin{itemize}
+            \item
+                Deposit code-lists for published studies
+            \item
+                Download historical code-lists
+            \item
+                Archive for all Quality and Outcomes Framework business rules (2004 - current)
+            \item
+                Database-specific information (e.g. consultation types)
+        \end{itemize}
+    \column{0.5\textwidth}
+    \includegraphics[width=\textwidth]{figure/clinical_codes.png}
+\end{columns}
+
+ClinicalCodes.org
+-----------------
+
+\begin{columns}[T]
+    \column{0.5\textwidth}
+        \begin{itemize}
+            \item
+                Allows for validation / replication of PCD studies
+            \item
+                Tracking of disease definitions through time
+            \item
+                Comparitive studies of clinical codes
+            \end{itemize}
+    \column{0.5\textwidth}
+        Don't reinvent the wheel!
+        \includegraphics[width=0.8\textwidth]{figure/reinventing_the_wheel.jpg}
+\end{columns}
+
+###### Currently in development on campus:
+
+__medcodes.ls.manchester.ac.uk:8080/codesdb__
+
+
+
+Summary
+-------
+
+\begin{columns}[T]
+    \column{0.4\textwidth}
+        \begin{itemize}
+            \item
+                Publish open access!
+            \pause
+            \item
+                Upload your codes!
+            \pause
+            \item
+                Thank you           
+        \end{itemize}
+    \column{0.6\textwidth}
+    \includegraphics[width=\textwidth]{figure/kitten_ransom.jpg}
+\end{columns}
+
+
