@@ -1,0 +1,320 @@
+
+# Subsetting in R: Spring cleaning your data 
+## Manchester FLS R User group April 2013
+### David Springate
+#### @datajujitsu
+##### The .Rmd source and data for this tutorial can be found [here](https://github.com/DASpringate/tutorials)
+
+--------------------
+
+## Session outline
+
+* Why use R for cleaning data?
+* Subsetting operators
+* Subsetting vectors
+* Subsetting Dataframes
+* Using subsetting to alter your data
+* Building a data-cleaning script
+* Problems
+
+-------------------------
+
+## Why not just use Excel?
+
+Excel is _ok_, __BUT__ 
+
+* Not scriptable
+* Point and click - Has no way of tracking workflow
+* Rubbish for large datasets
+* Alters the data in place - No long-term undo
+
+Most of the time doing statistics is actually spent cleaning data.
+
+You want to be able to do this in a trackable and reproducable way!
+
+----------------------------
+
+## A typical R workflow
+
+1. Do your experiment
+2. Enter your data in Excel
+3. Save as .csv
+4. Clean data in R, update data cleaning script
+5. Do some stats
+6. Realise data is still really dirty
+7. Go to 4
+
+Once you have entered your original data, this remains fixed.
+
+-----------------------------
+
+## Subsetting your data
+
+This is to select the specific sections of your dataset to be cleaned/edited/transformed
+
+This is a crucial part of most aspects of R programing, not just cleaning data.
+
+R is _very_ flexible! There are many different ways to do the same thing... This can cause confusion!
+    
+### 3 basic subsetting operators:
+
+* `[` selects  an element or a range of elements 
+* `$` selects an element by name in a dataframe / list
+* `[[` selects an element by reference / subsets a list (a more advanced data type!) / strips names from vector (!). We will ignore this for now!
+
+
+Subsetting is easier to understand for 1d vectors first
+
+We will look at these before generalising to dataframes. 
+
+Start by building a vector of random numbers:
+
+```{r, tidy = FALSE}
+set.seed(12345) # for reproducability!
+x <- rnorm(50) # 50 random numbers from a normal distribution (mean = 0, sd = 1)
+names(x) <- paste0("n", 1:50) # name each element of the vector
+x
+```
+
+### Using the `[` operator:
+
+#### Selecting items by name:
+
+```{r, tidy = FALSE}
+x["n1"] # single item
+x[c("n1", "n7", "n40")] # several items using a vector of names
+```
+
+#### Selecting by index:
+
+```{r, tidy = FALSE}
+x[] # Blank selects everything - this will be useful later!
+x[42] # single item
+x[length(x)] # can use functions!
+x[10:20] # Select a range of indices:
+x[c(2,4,6,8,10)] # Select by a vector of indices
+x[-c(1:10)] # returns everything but the negative indices
+```
+
+#### Selecting by predicate (logical vector)
+
+Returns all elements where the corresponding logical value is TRUE
+
+Remember week 1:
+
+```{r, tidy = FALSE}
+# Logical operators (predicates) return TRUE/FALSE
+1 == 2
+```
+
+When applied to a numeric vector, logical operators build vectors of TRUE/FALSE values (The same length as the input vector):
+
+e.g.
+
+```{r, tidy = FALSE}
+x >= 1.96
+```
+
+... so you can also subset by these:
+
+```{r, tidy = FALSE}
+x[x >= 1.96]
+x[x < 1]
+x[x >= 1.96 | x <= -1.96] # can be as complicated as you like
+# What is this doing?
+x[1:50 %% 2 == 0] # %% is the modulo operator (remainder of a division of one number by another)
+```
+
+Of course, each returned subset can be assigned to a new symbol:
+
+```{r, tidy = FALSE}
+y <- x[x > 0 & x < 2]
+y
+```
+
+------------------------------------
+
+## Subsetting data frames 
+
+The principle is the same, but it is more complicated because dataframes have 2 dimensions (rows and columns)
+
+Now we use two subsetting expressions [first rows, then columns] separated by a comma
+
+We will be using a version of Fisher's Iris data that I have mangled!
+
+You can get the original data by calling `data(iris)`
+
+```{r, tidy = FALSE}
+iris <- read.csv("~/Dropbox/tutorials/subsetting/iris_mangled.csv")
+# If you make a mistake, just call this again to get you back to the start!
+```
+
+With dataframes, you can also use the $ operator to select columns:
+
+```{r, tidy = FALSE}
+iris$Sepal.Length
+iris$Petal.Length
+```
+
+You have already learned about functions to examine your data, e.g.
+
+```{r, tidy = FALSE, eval = FALSE}
+summary(iris)
+head(iris)
+names(iris)
+str(iris)
+View(iris)
+```
+
+Also useful for exploring your data is the pairs function
+
+This builds a matrix of scatter plots for all pairs of variables in your data
+
+```{r, tidy = FALSE}
+pairs(iris) 
+```
+
+But the species factor complicates things, lets remove it:
+
+```{r, tidy = FALSE}
+pairs(iris[,-5]) # blank before the comma selects all rows, -5 after the comma removes column #5
+```
+
+Looking at this plot, what needs to be done?
+
+1. Petal.Width and Petal.Breadth are perfectly correlated - remove the duplicate Petal.Breadth
+2. Missing values (NA) in Sepal.Length - remove missing data rows
+3. Petal lengths recorded on the wrong scale (metres rather than centimetres!) - transform back to cm
+4. Big outlier in Sepal.Width - correct this typo
+
+----------------------
+
+## 1. Removing a column 
+
+You can remove a whole column by assigning NULL to it:
+
+```{r, tidy = FALSE}
+iris$petal.Breadth <- NULL
+```
+
+---------------------
+
+## 2. Removing missing values 
+
+You can do this using logical vectors:
+
+Remember that you must explicitly reassign the data:
+
+```{r, tidy = FALSE}
+iris[!is.na(iris$Sepal.Length),] # returns the correct data, but leaves the original unchanged
+iris$Sepal.Length # Still see NA's
+iris <- iris[!is.na(iris$Sepal.Length),] # reassigns the altered data back to iris
+# iris <- iris[complete.cases(iris$Sepal.Length),] # also works
+iris$Sepal.Length # no missing data now
+```
+
+## 3. Transforming a whole column
+
+Remember: Use the tab key to auto-complete variable names!
+
+Assign the changed vector to the original column
+
+Note that we are using vectors so no commas!
+
+```{r, tidy = FALSE}
+# transform Petal length to cm
+iris$Petal.Length[iris$Species == "versicolor"] <- iris$Petal.Length[iris$Species == "versicolor"] * 100
+pairs(iris[,-5]) 
+```
+
+------------------------------
+
+## 4. Changing a single data point
+
+The 6th Sepal.Width value is a large outlier...
+
+Looking at the original data recording sheet, you might see that the digits in the 6th Sepal.Width value were transposed...
+
+Fix this:
+
+```{r, tidy = FALSE}
+iris$Sepal.Width[6]
+iris$Sepal.Width[6] <- 3.9
+pairs(iris[,-5]) 
+```
+
+__Your data is now cleaned and ready for analysis!__
+
+----------------------------------
+
+## Tip: Make a data cleaning script
+
+It is good practice to separate out your cleaning and analysis scripts
+
+e.g. get_data.R:
+
+```{r, tidy = FALSE, eval=FALSE}
+iris <- read.csv("~/Dropbox/tutorials/subsetting/iris_mangled.csv")
+iris$petal.Breadth <- NULL
+iris <- iris[!is.na(iris$Sepal.Length),] 
+iris$Petal.Length[iris$Species == "versicolor"] <- iris$Petal.Length[iris$Species == "versicolor"] * 100
+iris$Sepal.Width[6] <- 3.9
+```
+
+This reads in and cleans your data, leaving the original data unchanged
+
+Run this at the start of all of your analysis scripts:
+
+`source("path/to/get_data.R")`
+
+---------------------
+
+# PROBLEMS
+
+Have a go at the following to test your understanding:
+
+## 1. What do the following commands do?
+
+You may need to search the help file and run the code within the brackets separately to work them out
+
+### 1a.
+
+```{r, tidy = FALSE, eval = FALSE}
+iris1 <- iris[sample(nrow(iris), replace = TRUE),] 
+```
+
+### 1b.
+
+```{r, tidy = FALSE, eval = FALSE}
+iris2 <- iris[order(iris$Species, iris$Sepal.Width),]
+```
+
+### 1c. 
+
+```{r, tidy = FALSE, eval = FALSE}
+mynames <- names(iris)[c(1:2, 5)]
+iris3 <- iris[, mynames]
+```
+
+### 1d. 
+
+```{r, tidy = FALSE, eval = FALSE}
+iris3$Long.Petals <- "no"
+iris3$Long.Petals[iris3$Petal.Length >= median(iris3$Petal.Length)]  <- "yes"
+```
+
+## 2. Write commands to do the following tasks:
+
+### 2a. 
+
+_Create a dataset, `iris4`, with all data for species setosa with petals longer than 3 cm_
+
+### 2b. 
+
+_Create a vector, `z`, of setosa Sepal widths_
+
+### 2c. 
+
+_Create a dataset, `iris5`, where all continuous variables are log transformed_
+
+note the `cbind()` and `log()` functions could be handy!
