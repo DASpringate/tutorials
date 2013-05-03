@@ -1,0 +1,103 @@
+# Speeding up your R code - vectorisation tricks for beginners
+## David Springate
+### @datajujitsu
+#### The .Rmd source and data for this tutorial can be found [here](https://github.com/DASpringate/tutorials)
+
+
+The most frequent criticism I hear about R (OK, one of the most frequent criticisms, along with the bizarre subsetting syntax, the rather diffuse documentation and its laughable approach to truth-testing) is the seemingly glacial speed at which it executes a for loop.
+
+It is true that the for loop in R takes a tediously long time but there is a proper R approach to iteration, though it can be (at least initially) pretty counter-intuitive.
+
+The apply functions (apply, sapply, lapply etc.) are marginally faster than a regular for loop, but still do their looping in R, rather than dropping down to the lower level of C code. For a beginner, it can also be difficult to understand why you would want to use one of these functions with their arcane syntax.
+
+If you have a multi-core machine, you can easily speed up your lapply calls by replacing them with the rather wonderful mclapply from the multicore package, but to effectively repeat processes in R, you really need to learn how to vectorise...
+Essentially, this means calling a function that runs its loops in C rather than R code. There are many built in functions that do this, such as the rowMeans or colMeans. 
+
+As an example, here I am just getting the row means of every row of two columns in the following 10000 row dataframe: 
+
+```{r}
+N <- 10000
+x1 <- runif(N)
+x2 <- runif(N)
+d <- as.data.frame(cbind(x1, x2))
+```
+
+I compare the time to do this using a for loop... 
+
+```{r}
+system.time(
+for(loop in c(1:length(d[,1]))){
+    d$mean2[loop] <- mean(c( d[loop,1] , d[loop,2 ]))
+}
+)
+```
+
+the apply function... 
+
+```{r}
+system.time(
+    d$mean1 <- apply(d, 1, mean)
+    )
+```
+
+and the vectorised rowMeans function:
+
+```{r}
+system.time(
+    d$mean3 <- rowMeans(d[,c(1,2)])
+    )
+```
+
+On my machine, the vectorised function is >90 times faster than apply and >7,000 times faster than the R loop!
+    
+Also, consider filling a vector with a sequence of numbers. 
+
+The really bad way would be to use a loop and grow the vector with each iteration:
+
+```{r}
+x <- c()
+for(i in 1:100000)
+{
+    x <- c(x,i)
+}
+```
+
+Whereas it is better to use the vectorised seq function:
+
+```{r}    
+y <- seq(1,100000)
+```
+
+or even better, in this simple case:
+
+```{r}
+z <- 1:100000
+```
+
+The for loop took 15 seconds on my machine, the seq function took 0.001 second, and the time didn't even register above 0 for the last method!
+
+Finally, you may want to take values in a vector below a certain cutoff and replace them with something else, such as NA. It is tempting to do something like the following:
+
+```{r}
+x <- runif(1000000)
+for(i in 1:length(x))
+    {
+    if(x[i] < 0.05)
+        {
+        x[i] <- NA
+        }
+    }
+```
+
+Here you have not only a one-million iteration for loop, but you are truth testing on every iteration as well. It is ~15 times faster (and far more compact and readable) to use the vectorised `which` function:
+
+```{r}
+x <- runif(1000000)
+x[which(x < 0.05)] <- NA
+```
+
+Here, you are clearly trading off memory for speed, since the which function returns a temporary vector of x's that are less than 0.05 on top of another length-million temporary boolean vector from the x < 0.05 expression to compare against. The vectors will have to get pretty big for this to be a problem, though.
+
+These are obviously really simplified examples, but they can be applied to many problems. The fact is that removing loops will almost always make things faster, simpler and more readable. 
+Wherever you find yourself wanting to write a for loop in R, stop and think. If you really do need to use a loop, try and keep as much outside of it as possible, build your sequences beforehand and rather than growing your vectors with each iteration, assign an empty matrix of the correct size at the start and fill it up using subscripting. Patrick Burns' [The R Inferno](www.burns-stat.com/pages/Tutor/R_inferno.pdf) has a really good chapter on replacing loops with vectorised functions and is well worth checking out.
+
